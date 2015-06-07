@@ -3,7 +3,7 @@
 
 void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 {
-	long i;
+	long i, j;
 	char *buffer;
 	long filelen;
         float scale = (float)scale_num / (float)scale_den;
@@ -56,28 +56,38 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
     
             i -= 3;
     
-            buffer[i] = (tmpInt - (tmpInt / 16)) * 10;
-            buffer[i] += tmpInt % 16;
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
             fprintf(out, "%c", buffer[i]);
             i++;
     
-            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16)) * 10;
-            buffer[i] = tmpInt - (tmpInt / 16 / 16);
-            fprintf(out, "%c", buffer[i]);
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+                fprintf(out, "%c", buffer[i]);
             i++;
     
-            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16)) * 10;
-            buffer[i] = tmpInt - (tmpInt / 16 / 16 / 16 / 16);
-            fprintf(out, "%c", buffer[i]);
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+                fprintf(out, "%c", buffer[i]);
             i++;
     
-            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16 / 16 / 16)) * 10;
-            buffer[i] = tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16 / 16);
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
             fprintf(out, "%c", buffer[i]);
             i++;
+
+    
     
             //=========================== HEIGHT ===============================
-            
+    
             newHeight = newHeight + (buffer[i] / 16) * 16;
             newHeight = newHeight + (buffer[i] % 16);
             i++;
@@ -94,26 +104,58 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
             newHeight = newHeight + (buffer[i] % 16) * 16*16*16*16*16*16;
             
             newHeight = newHeight * scale;
-            
-                        i -= 3;
-                        while (i < 26)
-            {
-                buffer[i] = 0;
-                buffer[i] += newHeight / 16;
-                buffer[i] += newHeight % 16;
-                fprintf(out, "%d", buffer[i]);
-                i++;
-            }
-            
-            
+            tmpInt = newHeight;
+    
+            i -= 3;
+    
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt % 16) ;
+            tmpInt /= 16;
+            buffer[i] += (tmpInt % 16)* 16;
+            tmpInt /= 16;
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+    
             printf("NEW W = %d\n", newWidth);
             printf("NEW H = %d\n", newHeight);
 	
-        while (i < filelen)
+        while (i < 54)
 	{
 		fprintf(out, "%c", buffer[i]);
-		i++; 
+		i++;
 	}
+    
+    j = 0;
+    while (i < filelen)
+    {
+        j %= 16;
+        fprintf(out, "%c", buffer[i]);
+        i++;
+        j++;
+    }
+    
+    
 	
 	
 
