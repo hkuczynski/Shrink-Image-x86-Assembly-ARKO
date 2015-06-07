@@ -52,20 +52,31 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
             newWidth = newWidth + (buffer[i] % 16) * 16*16*16*16*16*16;
             
             newWidth = newWidth * scale;
-            
+            tmpInt = newWidth;
+    
             i -= 3;
-            
-            while (i < 22)
-            {
-                buffer[i] = 0;
-                buffer[i] += newWidth / 16;
-                buffer[i] += newWidth % 16;
-                fprintf(out, "%c", buffer[i]);
-                i++;
-            }
-            
-            
-            //HEIGHT===============================
+    
+            buffer[i] = (tmpInt - (tmpInt / 16)) * 10;
+            buffer[i] += tmpInt % 16;
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16)) * 10;
+            buffer[i] = tmpInt - (tmpInt / 16 / 16);
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16)) * 10;
+            buffer[i] = tmpInt - (tmpInt / 16 / 16 / 16 / 16);
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            buffer[i] = (tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16 / 16 / 16)) * 10;
+            buffer[i] = tmpInt - (tmpInt / 16 / 16 / 16 / 16 / 16 / 16);
+            fprintf(out, "%c", buffer[i]);
+            i++;
+    
+            //=========================== HEIGHT ===============================
             
             newHeight = newHeight + (buffer[i] / 16) * 16;
             newHeight = newHeight + (buffer[i] % 16);
