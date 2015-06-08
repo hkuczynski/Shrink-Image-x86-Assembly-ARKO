@@ -7,8 +7,8 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 	char *buffer, *newImage;
 	long filelen;
         float scale = (float)scale_num / (float)scale_den;
-        int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, x, y, k;
-        
+    int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, x, y, k, offset = 0;
+    
         
         
         printf("%d\n", scale_num);
@@ -31,11 +31,35 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
         
         
 	i = 0;
-	while (i < 18)
+	while (i < 10)
 	{
             newImage[i] = buffer[i];
             i++; 
 	}
+    
+            offset = offset + (buffer[i] / 16) * 16;
+            offset = offset + (buffer[i] % 16);
+    newImage[i] = buffer[i];
+            i++;
+    
+            offset = offset + (buffer[i] / 16) * 16*16*16;
+            offset = offset + (buffer[i] % 16) * 16*16;
+    newImage[i] = buffer[i];
+            i++;
+    
+            offset = offset + (buffer[i] / 16) * 16*16*16*16*16;
+            offset = offset + (buffer[i] % 16) * 16*16*16*16;
+    newImage[i] = buffer[i];
+            i++;
+    
+            offset = offset + (buffer[i] / 16) * 16*16*16*16*16*16*16;
+            offset = offset + (buffer[i] % 16) * 16*16*16*16*16*16;
+
+            while (i < 18)
+                {
+                    newImage[i] = buffer[i];
+                    i++;
+                }
 
             actWidth = actWidth + (buffer[i] / 16) * 16;
             actWidth = actWidth + (buffer[i] % 16);
@@ -135,29 +159,33 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
             
             
 	
-        while (i < 54)
+        while (i < offset)
 	{
                 newImage[i] = buffer[i];
 		//fprintf(out, "%c", newImage[i]);
 		i++;
 	}
-    
+    printf("OFFSET %d actWidth = %d, actHeight = %d\n", offset, actWidth, actHeight);
         k = 0;
         while (i < filelen)
         {
-            x = (i-54) * scale;
-            y = (i-54) / actWidth * scale;
+            j = (i - offset)/8;
+            x = (j % (actWidth-1)) * scale;
+            y = j / (actWidth-1) ;
+            
+            
+            
             k = 0;
-            while (k < 16)
+            while (k < 8)
             {
-                    printf("x = %d, y = %d, k = %d, index = %d\n", x, y, k, x*y+k);
-                    newImage[x + y*newWidth + k + 54] = buffer[i + k];
+                    printf("x = %d, y = %d, k = %d, index = %d\n", x, y, k, x + (y * newWidth) + k + offset);
+                    newImage[x + (y * (newWidth - 1)) + k + offset] = buffer[i + k];
                     //fprintf(out, "%c", buffer[x+y*actWidth + k]);
-                    i++;
                     k++;
             }
+            i = i + k;
         }
-    
+    printf("OFFSET %d actWidth = %d, actHeight = %d\n", offset, actWidth, actHeight);
     
 	fwrite(newImage, filelen, 1, out); 
 	
