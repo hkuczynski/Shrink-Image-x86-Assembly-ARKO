@@ -7,7 +7,7 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 	char *buffer;
 	long filelen;
         float scale = (float)scale_num / (float)scale_den;
-        int newWidth = 0, newHeight = 0, tmpInt;
+        int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, x, y, k;
         
         printf("%d\n", scale_num);
         printf("%d\n", scale_den);
@@ -31,27 +31,26 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 	i = 0;
 	while (i < 18)
 	{
-            printf("%d\n", buffer[i]); 
             fprintf(out, "%c", buffer[i]);
             i++; 
 	}
 
-            newWidth = newWidth + (buffer[i] / 16) * 16;
-            newWidth = newWidth + (buffer[i] % 16);
+            actWidth = actWidth + (buffer[i] / 16) * 16;
+            actWidth = actWidth + (buffer[i] % 16);
             i++;
 
-            newWidth = newWidth + (buffer[i] / 16) * 16*16*16;
-            newWidth = newWidth + (buffer[i] % 16) * 16*16;
+            actWidth = actWidth + (buffer[i] / 16) * 16*16*16;
+            actWidth = actWidth + (buffer[i] % 16) * 16*16;
             i++;
 
-            newWidth = newWidth + (buffer[i] / 16) * 16*16*16*16*16;
-            newWidth = newWidth + (buffer[i] % 16) * 16*16*16*16;
+            actWidth = actWidth + (buffer[i] / 16) * 16*16*16*16*16;
+            actWidth = actWidth + (buffer[i] % 16) * 16*16*16*16;
             i++;
 
-            newWidth = newWidth + (buffer[i] / 16) * 16*16*16*16*16*16*16;
-            newWidth = newWidth + (buffer[i] % 16) * 16*16*16*16*16*16;
+            actWidth = actWidth + (buffer[i] / 16) * 16*16*16*16*16*16*16;
+            actWidth = actWidth + (buffer[i] % 16) * 16*16*16*16*16*16;
             
-            newWidth = newWidth * scale;
+            newWidth = actWidth * scale;
             tmpInt = newWidth;
     
             i -= 3;
@@ -88,22 +87,22 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
     
             //=========================== HEIGHT ===============================
     
-            newHeight = newHeight + (buffer[i] / 16) * 16;
-            newHeight = newHeight + (buffer[i] % 16);
+            actHeight = actHeight + (buffer[i] / 16) * 16;
+            actHeight = actHeight + (buffer[i] % 16);
             i++;
 
-            newHeight = newHeight + (buffer[i] / 16) * 16*16*16;
-            newHeight = newHeight + (buffer[i] % 16) * 16*16;
+            actHeight = actHeight + (buffer[i] / 16) * 16*16*16;
+            actHeight = actHeight + (buffer[i] % 16) * 16*16;
             i++;
 
-            newHeight = newHeight + (buffer[i] / 16) * 16*16*16*16*16;
-            newHeight = newHeight + (buffer[i] % 16) * 16*16*16*16;
+            actHeight = actHeight + (buffer[i] / 16) * 16*16*16*16*16;
+            actHeight = actHeight + (buffer[i] % 16) * 16*16*16*16;
             i++;
 
-            newHeight = newHeight + (buffer[i] / 16) * 16*16*16*16*16*16*16;
-            newHeight = newHeight + (buffer[i] % 16) * 16*16*16*16*16*16;
+            actHeight = actHeight + (buffer[i] / 16) * 16*16*16*16*16*16*16;
+            actHeight = actHeight + (buffer[i] % 16) * 16*16*16*16*16*16;
             
-            newHeight = newHeight * scale;
+            newHeight = actHeight * scale;
             tmpInt = newHeight;
     
             i -= 3;
@@ -137,8 +136,8 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
             i++;
     
     
-            printf("NEW W = %d\n", newWidth);
-            printf("NEW H = %d\n", newHeight);
+            printf("NEW WIDTH = %d\n", newWidth);
+            printf("NEW HEIGHT = %d\n", newHeight);
 	
         while (i < 54)
 	{
@@ -146,13 +145,19 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 		i++;
 	}
     
-    j = 0;
+    k = 0;
     while (i < filelen)
     {
-        j %= 16;
-        fprintf(out, "%c", buffer[i]);
-        i++;
-        j++;
+        x = (i-54) * scale;
+        y = (i-54) / actWidth * scale;
+        k = 0;
+        while (k < 16)
+        {
+        	printf("x = %d, y = %d, k = %d, index = %d\n", x, y, k, x*y+k);
+        	fprintf(out, "%c", buffer[x+y*actWidth + k]);
+        	i++;
+        	k++;
+        }
     }
     
     
