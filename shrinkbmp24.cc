@@ -7,7 +7,7 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 	char *buffer, *newImage;
 	long filelen;
         float scale = (float)scale_num / (float)scale_den;
-    int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, x, y, k, offset = 0;
+    int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, x, y, k, offset = 0, size = 0, actPadding, newPadding;
     
         
         
@@ -31,6 +31,32 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
         
         
 	i = 0;
+    newImage[i] = buffer[i];
+    i++;
+    newImage[i] = buffer[i];
+    i++;
+
+    size = size + (buffer[i] / 16) * 16;
+            size = size + (buffer[i] % 16);
+    newImage[i] = buffer[i];
+            i++;
+    
+            size = size + (buffer[i] / 16) * 16*16*16;
+            size = size + (buffer[i] % 16) * 16*16;
+    newImage[i] = buffer[i];
+            i++;
+    
+            size = size + (buffer[i] / 16) * 16*16*16*16*16;
+            size = size + (buffer[i] % 16) * 16*16*16*16;
+    newImage[i] = buffer[i];
+            i++;
+    
+            size = size + (buffer[i] / 16) * 16*16*16*16*16*16*16;
+            size = size + (buffer[i] % 16) * 16*16*16*16*16*16;
+
+
+     
+
 	while (i < 10)
 	{
             newImage[i] = buffer[i];
@@ -54,6 +80,8 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
     
             offset = offset + (buffer[i] / 16) * 16*16*16*16*16*16*16;
             offset = offset + (buffer[i] % 16) * 16*16*16*16*16*16;
+
+
 
             while (i < 18)
                 {
@@ -158,7 +186,15 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
             printf("NEW HEIGHT = %d\n", newHeight);
             
             
-	
+            size -= offset;
+            size /= actHeight;
+            actPadding = size % (actWidth * 3);      
+	printf("actPadding: %d\n", actPadding); 
+
+            newPadding = (newWidth * 3) % 4;
+
+                printf("newPadding: %d\n", newPadding); 
+
         while (i < offset)
 	{
                 newImage[i] = buffer[i];
@@ -167,25 +203,24 @@ void shrinkbmp24(FILE *img, unsigned int scale_num, unsigned int scale_den)
 	}
     printf("OFFSET %d actWidth = %d, actHeight = %d\n", offset, actWidth, actHeight);
         k = 0;
+        //actWidth = (actWidth * 3);
         while (i < filelen)
         {
-            j = (i - offset)/8;
-            x = (j % (actWidth-1)) * scale;
-            y = j / (actWidth-1) ;
+            j = (i - offset);
+            x = (j % actWidth) * scale;
+            y = j / (actWidth);
+
+            if(j % actWidth == 0)
+                k += newPadding;
             
-            
-            
-            k = 0;
-            while (k < 8)
-            {
-                    printf("x = %d, y = %d, k = %d, index = %d\n", x, y, k, x + (y * newWidth) + k + offset);
-                    newImage[x + (y * (newWidth - 1)) + k + offset] = buffer[i + k];
-                    //fprintf(out, "%c", buffer[x+y*actWidth + k]);
-                    k++;
-            }
-            i = i + k;
+            newImage[x + (y * (newWidth)) + offset + k] = buffer[i];
+            newImage[x + (y * (newWidth)) + offset + 1 + k] = buffer[i + 1];
+            newImage[x + (y * (newWidth )) + offset + 2 + k] = buffer[i + 2];
+
+            i += 3;
+
         }
-    printf("OFFSET %d actWidth = %d, actHeight = %d\n", offset, actWidth, actHeight);
+    //printf("OFFSET %d actWidth = %d, actHeight = %d\n", offset, actWidth, actHeight);
     
 	fwrite(newImage, filelen, 1, out); 
 	
