@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern void shrinkbmp24(unsigned char[], unsigned char[], unsigned int, unsigned int);
+extern void shrinkbmp24(unsigned char*, long, unsigned char*, unsigned int, unsigned int);
 
 int main(int argc, char * argv[])   
 {
     unsigned int scale_num, scale_den;
-    unsigned char* buffer, newImage;
+    unsigned char *buffer, *newImage;
     int i, filelen;
     
     if (argc <= 3)
@@ -40,9 +40,13 @@ int main(int argc, char * argv[])
             
             
             
-            shrinkbmp24(buffer, newImage, scale_num, scale_den);
+            shrinkbmp24(buffer, filelen, newImage, scale_num, scale_den);
+            
+            fwrite(newImage, filelen, 1, out);
             
             fclose (img); /* zamknij plik */
+            fclose (out); /* zamknij plik */
+            
         }
     }
    

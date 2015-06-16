@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int scale_num, unsigned int scale_den)
+void shrinkbmp24(unsigned char *buffer, long filelen, unsigned char *newImage, unsigned int scale_num, unsigned int scale_den)
 {
 	long i, j;
-	long filelen;
         float scale = (float)scale_num / (float)scale_den;
         int newWidth = 0, newHeight = 0, tmpInt, actWidth = 0, actHeight = 0, y, offset = 0, size = 0, actPadding, newPadding, pixel, nearestMatch, cy, cx;
         int padding_new = 0, padding_act = 0;
@@ -16,20 +15,20 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
    newImage[i] = buffer[i];
    i++;
 
-    size = size + (buffer[i] / 16) * 16;
+            size = size + (buffer[i] / 16) * 16;
             size = size + (buffer[i] % 16);
-    newImage[i] = buffer[i];
+            newImage[i] = buffer[i];
 
             i++;
             
             size = size + (buffer[i] / 16) * 16*16*16;
             size = size + (buffer[i] % 16) * 16*16;
-    newImage[i] = buffer[i]; 
+            newImage[i] = buffer[i]; 
             i++;
 
             size = size + (buffer[i] / 16) * 16*16*16*16*16;
             size = size + (buffer[i] % 16) * 16*16*16*16;
-    newImage[i] = buffer[i];
+            newImage[i] = buffer[i];
             i++;
 
             size = size + (buffer[i] / 16) * 16*16*16*16*16*16*16;
@@ -59,7 +58,6 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
     
             offset = offset + (buffer[i] / 16) * 16*16*16*16*16*16*16;
             offset = offset + (buffer[i] % 16) * 16*16*16*16*16*16;
-
 
 
             while (i < 18)
@@ -170,18 +168,16 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
 		i++;
         }
         
-    cy = 0;
-    cx = 0;
-    
+        cy = 0;
+        cx = 0;
     
         while(cy < newHeight)
-        {
+        {            
+            cx = 0;
             while(cx < newWidth)
             {
-
                 pixel = (cy * (newWidth *3 + newPadding)) + (cx*3);
                 nearestMatch =  (((int)(cy / scale) * (actWidth *3 + actPadding)) + ((int)(cx / scale) *3) );
-                
                 
                 newImage[offset + pixel   ] =  buffer[offset + nearestMatch ];
                 newImage[offset + pixel + 1] =  buffer[offset + nearestMatch + 1];
@@ -190,9 +186,8 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
                 cx++;
             }
             
-            
-                        padding_new += newPadding;
-                        padding_act += actPadding / scale;
+            padding_new += newPadding;
+            padding_act += actPadding / scale;
             cy++;
         }
 
