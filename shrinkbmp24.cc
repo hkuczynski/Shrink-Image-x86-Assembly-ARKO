@@ -1,13 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int scale_num, unsigned int scale_den, int size)
 {
-    float scale = (float)scale_num / (float)scale_den;
-    int newHeight = 0, newWidth, actWidth, tmpInt, actHeight = 0, offset = 0, actPadding, newPadding;
+    float scale;
+    int newHeight, newWidth, actWidth, tmpInt, actHeight, offset, actPadding, newPadding;
     int padding_new = 0, padding_act = 0, cy, cx;
     
-    
+    scale = (float)scale_num / (float)scale_den;
     //TRZEBA DODAC POBIERANIE OFFSETU
     //mov eax, DWORD[esi+10]
     
@@ -20,9 +17,14 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
     actHeight = 768;
     newHeight = actHeight * scale;
     actPadding = 4 - ((actWidth * 3) % 4);
+    newPadding = 4 - ((newWidth * 3) % 4);
+    
 
     if(actPadding == 4)
         actPadding = 0;
+    
+    if(newPadding == 4)
+        newPadding = 0;
 
     cy = 0;
     while(cy < newHeight)
