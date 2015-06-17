@@ -27,10 +27,10 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
         newPadding = 0;
 
     cy = 0;
-    while(cy < newHeight)
+    do
     {
         cx = 0;
-        while(cx < newWidth)
+        do
         {
             int pixel = (cy * (newWidth *3 + newPadding)) + (cx*3);
             int nearestMatch =  (((int)(cy / scale) * (actWidth *3 + actPadding)) + ((int)(cx / scale) *3) );
@@ -41,9 +41,11 @@ void shrinkbmp24(unsigned char *buffer, unsigned char *newImage, unsigned int sc
             
             cx++;
         }
+        while(cx < newWidth);
         
         padding_new += newPadding;
         padding_act += actPadding / scale;
         cy++;
     }
+    while(cy < newHeight);
 }
