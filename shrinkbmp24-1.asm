@@ -27,7 +27,7 @@ mov    DWORD [ebp-0x2c],0x0
  fild   QWORD [ebp-0x58]
  fstp   DWORD [ebp-0x44]
  fld    DWORD [ebp-0x44]
- fdivr st(1),st
+ fdivrp ST1,ST0
  fstp   DWORD [ebp-0x20]
     					;//mov eax, DWORD[esi+10]
     
@@ -92,30 +92,25 @@ mov    DWORD [ebp-0x10],0x300
 
     					;if(actPadding == 4)
   cmp    DWORD [ebp-0x38],0x4
-  jne    gowno
+  jne    actPaddingDone
         				;actPadding = 0;
-mov    DWORD [ebp-0x38],0x0
-
-gowno:
-    
+	mov    DWORD [ebp-0x38],0x0
+actPaddingDone:
     					;if(newPadding == 4)
   cmp    DWORD [ebp-0x34],0x4
-  jne    gowno1
-        				;newPadding = 0;
+  jne    newPaddingDone
+        ;newPadding = 0;
 mov    DWORD [ebp-0x34],0x0
-gowno1:
-
+newPaddingDone:
     					;cy = 0;
 mov    DWORD [ebp-0x28],0x0
     					;while(cy < newHeight)
-jmp    exit
+cyNewHeight:
     					;{
         					;cx = 0;
-        					gowno3:
 mov    DWORD [ebp-0x24],0x0
-gowno1:
         					;while(cx < newWidth)
-jmp    1da <_Z11shrinkbmp24PhS_jji+0x1da>
+cxNewWidth:
         					;{
             					;int pixel = (cy * (newWidth *3 + newPadding)) + (cx*3);
  mov    edx,DWORD [ebp-0x14]
@@ -215,7 +210,7 @@ add    DWORD [ebp-0x24],0x1
         					;while(cx < newWidth)
  mov    eax,DWORD [ebp-0x24]
  cmp    eax,DWORD [ebp-0x14]
- jl     105 <_Z11shrinkbmp24PhS_jji+0x105>
+ jl     cxNewWidth
             					;newImage[offset + pixel + 2 ] =  buffer[offset + nearestMatch + 2];
             
             					;cx++;
@@ -228,7 +223,7 @@ add    DWORD [ebp-0x24],0x1
  fild   DWORD [ebp-0x2c]
  fild   DWORD [ebp-0x38]
  fdiv   DWORD [ebp-0x20]
- faddp  st(1),st
+ faddp  ST1, ST0
  fldcw  WORD [ebp-0x48]
  fistp  DWORD [ebp-0x2c]
  fldcw  WORD [ebp-0x46]
@@ -242,7 +237,8 @@ add    DWORD [ebp-0x28],0x1
     					;while(cy < newHeight)
 mov    eax,DWORD [ebp-0x28]
 cmp    eax,DWORD [ebp-0xc]
-jl     f9 <_Z11shrinkbmp24PhS_jji+0xf9>
-        
+jl     cyNewHeight
+   
+exit:   
  leave  
  ret    
