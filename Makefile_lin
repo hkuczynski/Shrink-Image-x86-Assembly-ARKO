@@ -1,2 +1,2 @@
 all:
-	gcc -o shrink_linux -m32 main.cc shrinkbmp24.cc
+	gcc -o shrink_linux -m32 main.c shrinkbmp24.c
