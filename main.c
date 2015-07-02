@@ -6,7 +6,7 @@ extern void shrinkbmp24(unsigned char *, unsigned int, unsigned int);
 int main(int argc, char * argv[])   
 {
     unsigned int scale_num, scale_den;
-    int i, size;
+    int i, size = 0;
     long fileLength;
     float scale;
 
@@ -27,15 +27,12 @@ int main(int argc, char * argv[])
         else
         {
             outputImage = fopen("out.bmp", "w");
-            fseek(inputImage, 0, SEEK_END);          // Jump to the end of the file
-            fileLength = ftell(inputImage);             // Get the current byte offset in the file
-            rewind(inputImage);                      // Jump back to the beginning of the file
+            fseek(inputImage, 0, SEEK_END);          
+            fileLength = ftell(inputImage);             
+            rewind(inputImage);                      
             
-            inputImageArray = (unsigned char *)malloc((fileLength+1)*sizeof(unsigned char)); // Enough memory for file + \0
+            inputImageArray = (unsigned char *)malloc((fileLength+1)*sizeof(unsigned char));
             fread(inputImageArray, fileLength, 1, inputImage);
-            
-            //ustalic prawidlowy (nowy) rozmiar
-
 
             scale_num = atoi(argv[2]);
             scale_den = atoi(argv[3]);
@@ -44,9 +41,21 @@ int main(int argc, char * argv[])
 
             shrinkbmp24(inputImageArray, scale_num, scale_den);
             
-            fwrite(inputImageArray, fileLength, 1, outputImage);
+            size += (inputImageArray[2] >> 4) << 4;
+            size += (inputImageArray[2] % 16);
+             
+            size += (inputImageArray[3] >> 4) << 12;
+            size += (inputImageArray[3] % 16) << 8;
+ 
+            size += (inputImageArray[4] >> 4) << 20;
+            size += (inputImageArray[4] % 16) << 16;
+ 
+            size += (inputImageArray[5] >> 4) << 28;
+            size += (inputImageArray[5] % 16) << 24;
+            
+            fwrite(inputImageArray, size, 1, outputImage);
             fclose(outputImage);
-            fclose (inputImage); /* zamknij plik */
+            fclose (inputImage);
         }
     }
    

@@ -1,2 +1,0 @@
-all:
-	gcc -o shrink_mac -m32 main.cc shrinkbmp24.cc

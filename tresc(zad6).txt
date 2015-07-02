@@ -1,0 +1,4 @@
+6.void shrinkbmp24(void *img, unsigned int scale_num, unsigned int scale_den);
+Pomniejszenie obrazu .BMP 24 bpp w stosunku podanym jako ułamek scale_num/scale_den
+(< 1). Można zmodyfikować listę argumentów stosownie do wymagań implementacji.
+Rozważyć możliwość użycia jednostki wektorowej.
