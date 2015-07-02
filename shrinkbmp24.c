@@ -3,11 +3,11 @@
 
 void shrinkbmp24(unsigned char *buffer, unsigned int scale_num, unsigned int scale_den)
 {
-    float scale = (float)scale_num / (float)scale_den;
     int newHeight, newWidth, actWidth, actHeight, offset, actPadding, newPadding, loopWidth, loopHeight;
     int pixelIn, pixelOut;
-    float odwScale;
+    float scale, odwScale;
 
+    scale = (float)scale_num / (float)scale_den;
     offset = 54;
     actWidth = 1280;
     newWidth = actWidth * scale;
@@ -16,8 +16,8 @@ void shrinkbmp24(unsigned char *buffer, unsigned int scale_num, unsigned int sca
     actPadding = 4 - ((actWidth * 3) % 4);
     newPadding = 4 - ((newWidth * 3) % 4);
 
-    printf("newWidth = %d\n", newWidth);
-    printf("newHeight = %d\n", newHeight);
+    //printf("newWidth = %d\n", newWidth);
+    //printf("newHeight = %d\n", newHeight);
 
     if(actPadding == 4)
         actPadding = 0;
