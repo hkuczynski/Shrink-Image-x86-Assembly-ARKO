@@ -6,6 +6,7 @@ void shrinkbmp24(unsigned char *, unsigned int, unsigned int);
 int main(int argc, char * argv[])
 {
     unsigned int scale_num, scale_den;
+    int dupa;
     int i, size = 0;
     long fileLength;
     float scale;

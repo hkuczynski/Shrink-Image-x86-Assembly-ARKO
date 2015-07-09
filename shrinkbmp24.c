@@ -4,7 +4,7 @@
 void shrinkbmp24(unsigned char *buffer, unsigned int scale_num, unsigned int scale_den)
 {
     int newHeight, newWidth, actWidth, actHeight, offset, actPadding, newPadding, loopWidth, loopHeight;
-    int pixelIn, pixelOut;
+    int pixelIn, pixelOut, x;
     float scale, odwScale;
 
     scale = (float)scale_num / (float)scale_den;
@@ -28,6 +28,10 @@ void shrinkbmp24(unsigned char *buffer, unsigned int scale_num, unsigned int sca
     odwScale = 1 / scale;
 
     loopHeight = 0;
+    loopHeight = 0;
+    loopHeight = 0;
+    loopHeight = 0;
+    loopHeight = 0;
 
     do
     {
@@ -42,7 +46,8 @@ void shrinkbmp24(unsigned char *buffer, unsigned int scale_num, unsigned int sca
             buffer[offset + pixelOut + 2] =  buffer[offset + pixelIn + 2];
 
             loopWidth--;
-            pixelIn += odwScale * 3;
+            x = 3;
+            pixelIn +=  x * odwScale;
             pixelOut += 3;
         } while(loopWidth >= 0);
 
